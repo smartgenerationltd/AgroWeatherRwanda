@@ -1,0 +1,8 @@
+{
+  "name": "AgroWeather Rwanda",
+  "description": "AI-powered climate-smart agriculture decision-support platform tailored for Rwandan farmers (Abahinzi), traders (Abacuruzi), and local leaders (Abayobozi). Powered by Meteo Rwanda and Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
