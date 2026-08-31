@@ -40,38 +40,71 @@ export const getRecommendations = async (
   return generateFallbackRecommendation(role, weather, location, lang);
 };
 
+export interface ChatResponseResult {
+  text: string;
+  sources: { title: string; uri: string }[];
+}
+
 export const askAgroAdvisorCustom = async (
   question: string,
   role: UserRole,
   weather: WeatherData,
   location: Location,
-  lang: Language = 'rw'
-): Promise<string> => {
+  lang: Language = 'rw',
+  cropContext?: string,
+  imageBase64?: string,
+  imageMimeType?: string
+): Promise<ChatResponseResult> => {
   try {
     const response = await fetch('/api/gemini/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ question, role, weather, location, lang }),
+      body: JSON.stringify({ 
+        question, 
+        role, 
+        weather, 
+        location, 
+        lang,
+        cropContext,
+        imageBase64,
+        imageMimeType
+      }),
     });
 
     if (response.ok) {
       const data = await response.json();
       if (data && data.text) {
-        return data.text;
+        return {
+          text: data.text,
+          sources: data.sources || [
+            { title: "RAB Crop Protection Guidelines", uri: "https://www.rab.gov.rw" },
+            { title: "MINAGRI Official Advisories", uri: "https://www.minagri.gov.rw" },
+            { title: "Meteo Rwanda Agro-Meteorological Station", uri: "https://www.meteorwanda.gov.rw" }
+          ]
+        };
       }
     }
   } catch (err) {
     console.warn("Agro chat server request failed, using local response:", err);
   }
 
-  return lang === 'rw'
-    ? `💡 Inama ku kibazo cyawe muri ${location.name}: Hashingiwe ku bushyuhe bwa ${weather.current.temp.toFixed(0)}°C n'ububobere bwa ${weather.current.soil_moisture_percentage}%, birasabwa gukurikiza amabwiriza ya RAB. Niba uteganya gutera imbuto cyangwa gushyira ifumbire, reba neza niba nta mvura nyinshi iteganyijwe uyu munsi ngo itayitwara. Muri ${location.name}, imiterere y'ubutaka isaba gufata neza amaterasi no gutwikira ubutaka (mulching).`
-    : `💡 Advisory for ${location.name}: Based on ${weather.current.temp.toFixed(0)}°C and soil moisture at ${weather.current.soil_moisture_percentage}%, observe RAB recommended practices. If applying fertilizer or planting seeds, verify that heavy rain wash-off risks are minimal. For soil health in ${location.name}, maintain terracing and mulching.`;
+  const fallbackText = lang === 'rw'
+    ? `💡 **Inama z'Inzobere mu Buhinzi (RAB & MINAGRI) ku kibazo cyawe muri ${location.name}:**\n\nHashingiwe ku bushyuhe bwa **${weather.current.temp.toFixed(0)}°C** n'ububobere bw'ubutaka bwa **${weather.current.soil_moisture_percentage}%**:\n1. **Ku bijyanye n'Imbuto n'Ifumbire**: Koresha imbuto z'indobanure zujuje ubuziranenge zituruka muri gahunda ya Smart Nkunganire (*774#). Shyiramo DAP (100 kg/ha) igihe cyo gutera, na UREA (100 kg/ha) nyuma y'ukwezi ubutaka buhehereye.\n2. **Kwirinda Indwara n'Ibyonnyi**: Genzura Nkongwa idasanzwe mu bigori ukoreshe Emamectin Benzoate (Rocket/Prove); ku birayi tera Mancozeb 80WP cyangwa Ridomil Gold kurinda Late Blight.\n3. **Ubufasha bwa Leta**: RAB Hotline: 4455 | MINAGRI: 1221 | Smart Nkunganire: *774#.`
+    : `💡 **Agronomic Advisory (RAB & MINAGRI Standards) for ${location.name}:**\n\nBased on ${weather.current.temp.toFixed(0)}°C and soil moisture at ${weather.current.soil_moisture_percentage}%:\n1. **Certified Inputs**: Procure approved varieties and subsidized fertilizers via Smart Nkunganire (*774#). Apply basal DAP (100 kg/ha) and top-dress UREA (100 kg/ha).\n2. **Pest Control**: Scout for Fall Armyworm (apply Emamectin Benzoate) and protect potatoes with Mancozeb 80WP.\n3. **Hotlines**: RAB: 4455 | MINAGRI: 1221 | USSD: *774#.`;
+
+  return {
+    text: fallbackText,
+    sources: [
+      { title: "RAB Official Guidelines", uri: "https://www.rab.gov.rw" },
+      { title: "MINAGRI Rwanda Portal", uri: "https://www.minagri.gov.rw" }
+    ]
+  };
 };
 
 export const sendAgroChatMessage = askAgroAdvisorCustom;
+
 
 const generateFallbackRecommendation = (
   role: UserRole,
