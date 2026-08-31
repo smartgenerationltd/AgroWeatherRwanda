@@ -2,6 +2,7 @@ import React from 'react';
 import { UserRole, Language } from '../types';
 import { USER_ROLES_CONFIG } from '../constants';
 import { CheckCircle2, ArrowRight, Sparkles } from 'lucide-react';
+import AgroWeatherLogo from './AgroWeatherLogo';
 
 interface RoleSelectorProps {
   onSelectRole: (role: UserRole) => void;
@@ -12,19 +13,19 @@ interface RoleSelectorProps {
 const RoleSelector: React.FC<RoleSelectorProps> = ({ onSelectRole, lang, onLanguageChange }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[90vh] py-8 px-4 relative z-10">
-      {/* Title & Introduction */}
-      <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-md border border-sky-200 px-4 py-1.5 rounded-full text-xs font-bold text-sky-900 mb-4 shadow-sm">
+      {/* Title & Introduction with Official Symbols */}
+      <div className="text-center max-w-3xl mx-auto mb-8 flex flex-col items-center">
+        <div className="mb-5">
+          <AgroWeatherLogo size="xl" lang={lang} variant="light" />
+        </div>
+
+        <div className="inline-flex items-center gap-2 bg-white/85 backdrop-blur-md border border-sky-200 px-4 py-1.5 rounded-full text-xs font-bold text-sky-900 mb-4 shadow-sm">
           <span>🇷🇼</span>
           <span>{lang === 'rw' ? 'Ihuriro ry\'Iteganyagihe n\'Ubuhinzi mu Rwanda' : 'Rwanda Climate-Smart Agrometeorology Platform'}</span>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-4 drop-shadow-sm">
-          AgroWeather <span className="text-sky-600">Rwanda</span>
-        </h1>
-
-        <p className="text-base sm:text-lg text-slate-700 font-medium max-w-2xl mx-auto leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-800 font-medium max-w-2xl mx-auto leading-relaxed">
           {lang === 'rw'
             ? 'Guha abahinzi b\'u Rwanda inama zifatika z\'iteganyagihe rya Meteo Rwanda na AI kugira ngo bafate ibyemezo bikwiriye byo gutera, gushyira ifumbire, gusarura no kurinda ibihingwa.'
             : 'AI-powered climate-smart decision-support platform turning localized Meteo Rwanda data into practical, season-ready farming actions.'}

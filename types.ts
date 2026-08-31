@@ -1,10 +1,131 @@
 export enum UserRole {
-  Farmer = 'Farmer',           // Abahinzi (Primary)
-  BusinessLeader = 'Trader',   // Abacuruzi (Secondary)
-  LocalLeader = 'Leader',      // Abayobozi (Institutional)
+  Farmer = 'Farmer',                 // Abahinzi (Smallholder & Commercial)
+  Agronomist = 'Agronomist',         // Abajyanama n'Inzobere mu buhinzi
+  Cooperative = 'Cooperative',       // Koperative z'Abahinzi
+  BusinessLeader = 'Trader',         // Abacuruzi n'Abatunganya umusaruro
+  LocalLeader = 'Leader',            // Abayobozi b'Inzego z'Ibanze (Umurenge/Akarere)
+  Researcher = 'Researcher',         // Abashakashatsi (RAB / Universities)
+  NGO = 'NGO',                       // Imiryango itari iya Leta
+  Admin = 'Admin',                   // Abayobozi ba Sisitemu
 }
 
-export type Language = 'rw' | 'en';
+export type Language = 'rw' | 'en' | 'fr';
+
+export type NavigationTab = 
+  | 'home' 
+  | 'weather' 
+  | 'farms' 
+  | 'crops' 
+  | 'ai-agronomist' 
+  | 'alerts' 
+  | 'calendar' 
+  | 'learn' 
+  | 'admin' 
+  | 'profile';
+
+export interface UserProfile {
+  uid: string;
+  fullName: string;
+  email: string;
+  phone?: string;
+  photoURL?: string;
+  role: UserRole;
+  preferredLanguage: Language;
+  province?: string;
+  district?: string;
+  sector?: string;
+  createdAt: string;
+  updatedAt: string;
+  isDemo?: boolean;
+}
+
+export interface Farm {
+  id: string;
+  ownerId: string;
+  farmName: string;
+  province: string;
+  district: string;
+  sector: string;
+  village?: string;
+  latitude?: number;
+  longitude?: number;
+  altitudeMeters?: number;
+  farmSizeHectares: number;
+  soilType: string;
+  irrigationType: 'Rainfed' | 'Canal/Marshland' | 'Drip/Sprinkler' | 'Pumping' | 'None';
+  terraced: boolean;
+  agroEcoZone?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CropGrowthStage = 
+  | 'Land Preparation'
+  | 'Planting'
+  | 'Germination'
+  | 'Vegetative'
+  | 'Flowering'
+  | 'Fruiting'
+  | 'Maturity'
+  | 'Harvest';
+
+export interface Crop {
+  id: string;
+  farmId: string;
+  ownerId: string;
+  cropType: string;
+  cropNameRw: string;
+  variety: string;
+  season: 'Season A' | 'Season B' | 'Season C';
+  plantingDate: string;
+  expectedHarvestDate: string;
+  growthStage: CropGrowthStage;
+  acreage: number;
+  healthStatus: 'Excellent' | 'Good' | 'Attention Needed' | 'Risk Alert';
+  targetYieldKg?: number;
+  waterNeed: 'Low' | 'Moderate' | 'High';
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FarmingTask {
+  id: string;
+  ownerId: string;
+  farmId?: string;
+  cropId?: string;
+  cropName?: string;
+  title: string;
+  titleRw: string;
+  description: string;
+  descriptionRw: string;
+  dueDate: string;
+  category: 'Planting' | 'Fertilizer' | 'Spraying' | 'Weeding' | 'Irrigation' | 'Scouting' | 'Harvesting' | 'Storage' | 'General';
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'pending' | 'completed' | 'postponed';
+  weatherSuitability: 'optimal' | 'caution' | 'avoid';
+  weatherReason?: string;
+  createdAt: string;
+}
+
+export interface ChatMessage {
+  id: string;
+  sender: 'user' | 'ai';
+  text: string;
+  timestamp: string;
+  sources?: { title: string; uri: string }[];
+}
+
+export interface Conversation {
+  id: string;
+  userId: string;
+  title: string;
+  messages: ChatMessage[];
+  district?: string;
+  cropContext?: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 export interface AgroEcoZone {
   code: string;
@@ -27,9 +148,11 @@ export interface Location {
   altitudeMeters: number;
   stationName: string;
   dominantCrops: string[];
+  sectors?: string[];
 }
 
 export interface WeatherCondition {
+  id?: number;
   main: string;
   description: string;
   descriptionEn: string;
@@ -48,6 +171,9 @@ export interface CurrentWeather {
   soil_temp: number;
   evapotranspiration: number; // mm/day
   condition: WeatherCondition;
+  visibilityKm?: number;
+  airPressureHpa?: number;
+  dewPoint?: number;
 }
 
 export interface ForecastDay {
@@ -80,9 +206,12 @@ export interface Alert {
   message: string;
   messageEn: string;
   severity: 'warning' | 'danger' | 'info';
-  category: 'RAIN' | 'LANDSLIDE' | 'DROUGHT' | 'PEST' | 'WIND';
+  category: 'RAIN' | 'LANDSLIDE' | 'DROUGHT' | 'PEST' | 'WIND' | 'HEAT' | 'DISEASE' | 'PLANTING' | 'HARVEST';
   timestamp: string;
+  recommendedAction?: string;
+  recommendedActionRw?: string;
   affectedSectors?: string[];
+  read?: boolean;
 }
 
 export interface CropAdvisory {
@@ -135,3 +264,25 @@ export interface WeatherData {
   marketCommodities: MarketCommodity[];
   leaderMetrics: LeaderDisasterMetric;
 }
+
+export interface EducationArticle {
+  id: string;
+  category: string;
+  titleRw: string;
+  titleEn: string;
+  titleFr?: string;
+  summaryRw: string;
+  summaryEn: string;
+  summaryFr?: string;
+  contentRw: string;
+  contentEn: string;
+  contentFr?: string;
+  readTimeMinutes?: number;
+  readingTimeMinutes?: number;
+  icon?: string;
+  tags?: string[];
+  author?: string;
+  sourceUrl?: string;
+}
+
+export type EducationalArticle = EducationArticle;

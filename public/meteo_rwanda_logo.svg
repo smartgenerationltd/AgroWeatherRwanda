@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="meteoSkyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="60%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <radialGradient id="sunRayGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+    <linearGradient id="rwFlagTop" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00a3e0" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+    <linearGradient id="rwFlagMid" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#fad201" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="rwFlagBot" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#20603d" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Ring Badge -->
+  <circle cx="60" cy="60" r="56" fill="url(#meteoSkyGrad)" stroke="#38bdf8" stroke-width="2.5" />
+  <circle cx="60" cy="60" r="51" fill="none" stroke="#64748b" stroke-width="1" stroke-dasharray="3, 3" />
+
+  <!-- Radar Cones / Weather Wave Isobars -->
+  <circle cx="60" cy="54" r="32" fill="none" stroke="#38bdf8" stroke-width="1" opacity="0.3" />
+  <circle cx="60" cy="54" r="22" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.45" />
+  <circle cx="60" cy="54" r="12" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.6" />
+
+  <!-- Radiant Rwanda Sun Symbol (Top Right) -->
+  <g transform="translate(76, 38)">
+    <circle cx="0" cy="0" r="13" fill="none" stroke="#fcd34d" stroke-width="1.5" stroke-dasharray="2, 2" />
+    <circle cx="0" cy="0" r="8" fill="url(#sunRayGrad)" />
+  </g>
+
+  <!-- Meteorological Cloud -->
+  <path d="M38 58 C38 52 43 47 49 47 C51 43 55 40 60 41 C65 42 68 45 69 49 C73 49 76 52 76 56 C76 60 73 63 69 63 L43 63 C40 63 38 61 38 58 Z" fill="#ffffff" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))" />
+
+  <!-- Rain Droplets -->
+  <g fill="#38bdf8">
+    <path d="M46 68 L44 73 A1.5 1.5 0 0 0 47 74 L48 68 Z" />
+    <path d="M56 68 L54 74 A1.5 1.5 0 0 0 57 75 L58 68 Z" />
+    <path d="M66 68 L64 73 A1.5 1.5 0 0 0 67 74 L68 68 Z" />
+  </g>
+
+  <!-- Rwanda Flag Ribbon at Bottom -->
+  <g transform="translate(24, 82)">
+    <rect x="0" y="0" width="72" height="4" rx="2" fill="url(#rwFlagTop)" />
+    <rect x="0" y="5" width="72" height="3" rx="1.5" fill="url(#rwFlagMid)" />
+    <rect x="0" y="9" width="72" height="3" rx="1.5" fill="url(#rwFlagBot)" />
+  </g>
+
+  <!-- Label text -->
+  <text x="60" y="104" font-family="system-ui, sans-serif" font-size="7.5" font-weight="900" fill="#e2e8f0" text-anchor="middle" letter-spacing="1">
+    METEO RWANDA
+  </text>
+  <text x="60" y="112" font-family="system-ui, sans-serif" font-size="5" font-weight="700" fill="#94a3b8" text-anchor="middle" letter-spacing="0.5">
+    RWANDA METEOROLOGY AGENCY
+  </text>
+</svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="minagriBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b" />
+      <stop offset="50%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#022c22" />
+    </linearGradient>
+    <linearGradient id="goldSeal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#b45309" />
+    </linearGradient>
+    <linearGradient id="leafGreen" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#6ee7b7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Shield / Seal Badge -->
+  <circle cx="60" cy="60" r="56" fill="url(#minagriBg)" stroke="url(#goldSeal)" stroke-width="2.5" />
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#34d399" stroke-width="1" stroke-dasharray="3, 2" opacity="0.6" />
+
+  <!-- Traditional Agaseke Basket / Sun Crest Motif -->
+  <g transform="translate(60, 36)">
+    <!-- Sun Ray Arc -->
+    <path d="M-22 0 A22 22 0 0 1 22 0" fill="none" stroke="#fcd34d" stroke-width="1.8" stroke-dasharray="3, 3" />
+    <circle cx="0" cy="-6" r="6" fill="url(#goldSeal)" />
+  </g>
+
+  <!-- Golden Agriculture Wheat/Sorghum Sheaves (Left & Right) -->
+  <g stroke="url(#goldSeal)" stroke-width="1.8" stroke-linecap="round" fill="none">
+    <!-- Left Sheaf -->
+    <path d="M36 74 C34 60 40 46 50 42" />
+    <path d="M38 66 Q44 64 42 58" />
+    <path d="M35 56 Q41 54 40 48" />
+    
+    <!-- Right Sheaf -->
+    <path d="M84 74 C86 60 80 46 70 42" />
+    <path d="M82 66 Q76 64 78 58" />
+    <path d="M85 56 Q79 54 80 48" />
+  </g>
+
+  <!-- Center Rising Crop Seedling -->
+  <g transform="translate(60, 68)">
+    <path d="M0 6 L0 -16" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M0 -8 C6 -16 16 -14 16 -4 C16 4 6 5 0 -5 Z" fill="url(#leafGreen)" />
+    <path d="M0 -3 C-6 -10 -15 -8 -15 -1 C-15 5 -5 6 0 0 Z" fill="url(#leafGreen)" />
+  </g>
+
+  <!-- Bottom National Ribbon / Banner -->
+  <path d="M22 84 Q60 90 98 84 L94 96 Q60 102 26 96 Z" fill="#042f2e" stroke="url(#goldSeal)" stroke-width="1" />
+  
+  <text x="60" y="93" font-family="system-ui, sans-serif" font-size="7.5" font-weight="900" fill="#fef08a" text-anchor="middle" letter-spacing="1">
+    MINAGRI
+  </text>
+  <text x="60" y="111" font-family="system-ui, sans-serif" font-size="4.8" font-weight="700" fill="#a7f3d0" text-anchor="middle" letter-spacing="0.4">
+    MINISTRY OF AGRICULTURE
+  </text>
+</svg>

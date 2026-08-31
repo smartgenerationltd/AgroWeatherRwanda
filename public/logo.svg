@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" width="240" height="64" fill="none">
+  <defs>
+    <!-- Background Gradient for Icon Emblem -->
+    <linearGradient id="logoSkyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <!-- Sun Glow Gradient -->
+    <radialGradient id="logoSunGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+
+    <!-- Leaf Sprout Gradient -->
+    <linearGradient id="logoLeafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#6ee7b7" />
+    </linearGradient>
+
+    <!-- Hill Gradient -->
+    <linearGradient id="logoHillsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <!-- Raindrop Gradient -->
+    <linearGradient id="logoRainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <!-- EMBLEM ICON (Left) -->
+  <g transform="translate(4, 4)">
+    <!-- Base Rounded Badge -->
+    <rect width="56" height="56" rx="15" fill="url(#logoSkyGrad)" />
+    <rect width="56" height="56" rx="15" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.5" />
+
+    <!-- Golden Sun of Rwanda with Ray Ring -->
+    <g transform="translate(38, 16)">
+      <circle cx="0" cy="0" r="10" fill="none" stroke="#fcd34d" stroke-width="1.5" stroke-dasharray="2, 2.5" opacity="0.85" />
+      <circle cx="0" cy="0" r="6.5" fill="url(#logoSunGrad)" />
+    </g>
+
+    <!-- Weather Cloud -->
+    <path d="M14 25 C14 21.5 17 19 20.5 19 C22 16.5 25 14.5 28.5 15.5 C31.5 16.5 34 19 34.5 22 C37 22 39 24 39 27 C39 29.5 37 31.5 34.5 31.5 L17 31.5 C15.5 31.5 14 30 14 28.5 Z" fill="#ffffff" fill-opacity="0.95" />
+
+    <!-- Rain Drops -->
+    <path d="M19 34 L17.5 38 A1 1 0 0 0 19.5 38.6 L20 34 Z" fill="url(#logoRainGrad)" />
+    <path d="M25 34 L23.5 39 A1 1 0 0 0 25.5 39.6 L26 34 Z" fill="url(#logoRainGrad)" />
+    <path d="M31 34 L29.5 38 A1 1 0 0 0 31.5 38.6 L32 34 Z" fill="url(#logoRainGrad)" />
+
+    <!-- Rwandan Terraced Hills (Base) -->
+    <path d="M0 42 Q16 33 32 40 T56 37 L56 56 L0 56 Z" fill="url(#logoHillsGrad)" />
+    <path d="M0 48 Q20 40 42 46 T56 44 L56 56 L0 56 Z" fill="#042f2e" />
+
+    <!-- Sprouting Crop / Leaf -->
+    <g transform="translate(28, 43)">
+      <path d="M0 6 Q1 0 0 -12" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" fill="none" />
+      <path d="M0 -5 C4 -11 12 -10 12 -3 C12 3 5 4 0 -3 Z" fill="url(#logoLeafGrad)" />
+      <path d="M0 -1 C-4 -5 -10 -4 -10 1 C-10 4 -4 5 0 0 Z" fill="url(#logoLeafGrad)" />
+      <circle cx="8" cy="-4" r="0.8" fill="#ffffff" />
+    </g>
+  </g>
+
+  <!-- TYPOGRAPHY / BRAND TEXT (Right) -->
+  <g transform="translate(70, 0)">
+    <!-- Main Title -->
+    <text x="0" y="29" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="900" font-size="20" letter-spacing="-0.5">
+      <tspan fill="#ffffff">AgroWeather</tspan>
+      <tspan fill="#38bdf8" dx="4">Rwanda</tspan>
+    </text>
+
+    <!-- Subtitle / Tagline -->
+    <text x="0" y="47" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-weight="600" font-size="10.5" fill="#94a3b8" letter-spacing="0.2">
+      METEO RWANDA • MINAGRI • RAB
+    </text>
+
+    <!-- Small Badge -->
+    <g transform="translate(142, 14)">
+      <rect width="24" height="15" rx="4" fill="#10b981" fill-opacity="0.25" stroke="#34d399" stroke-width="1" stroke-opacity="0.6" />
+      <text x="12" y="11" font-family="system-ui, sans-serif" font-size="8.5" font-weight="800" fill="#6ee7b7" text-anchor="middle">AI</text>
+    </g>
+  </g>
+</svg>

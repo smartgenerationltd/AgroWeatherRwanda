@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="rwandaSky" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="50%" stop-color="#0369a1" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <!-- Sun Glow Gradient -->
+    <radialGradient id="rwandaSun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </radialGradient>
+
+    <!-- Leaf Sprout Gradient -->
+    <linearGradient id="agroLeaf" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="50%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#6ee7b7" />
+    </linearGradient>
+
+    <!-- Hill Gradient -->
+    <linearGradient id="rwandaHills" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <!-- Cloud Gradient -->
+    <linearGradient id="weatherCloud" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e0f2fe" />
+    </linearGradient>
+
+    <!-- Raindrop Gradient -->
+    <linearGradient id="rainDrop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base Badge / Container -->
+  <rect width="64" height="64" rx="16" fill="url(#rwandaSky)" />
+  <rect width="64" height="64" rx="16" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-opacity="0.4" />
+
+  <!-- Golden Sun of Rwanda (Upper Right) with Rays -->
+  <g transform="translate(42, 18)">
+    <!-- Sun Rays -->
+    <circle cx="0" cy="0" r="11" fill="none" stroke="#fcd34d" stroke-width="1.5" stroke-dasharray="2, 2.5" opacity="0.8" />
+    <!-- Sun Disc -->
+    <circle cx="0" cy="0" r="7.5" fill="url(#rwandaSun)" />
+  </g>
+
+  <!-- Weather Cloud (Upper Left to Center) -->
+  <path d="M16 28 C16 24 19 21 23 21 C24.5 18 28 16 32 17 C35.5 18 38 21 38.5 24 C41.5 24 44 26.5 44 29.5 C44 32.5 41.5 35 38.5 35 L19.5 35 C17.5 35 16 33.5 16 31.5 Z" fill="url(#weatherCloud)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))" />
+
+  <!-- Weather Rain Drops -->
+  <path d="M21 38 L19.5 42 A1.2 1.2 0 0 0 21.8 42.8 L22.5 38 Z" fill="url(#rainDrop)" />
+  <path d="M28 38 L26.5 43 A1.2 1.2 0 0 0 28.8 43.8 L29.5 38 Z" fill="url(#rainDrop)" />
+  <path d="M35 38 L33.5 42 A1.2 1.2 0 0 0 35.8 42.8 L36.5 38 Z" fill="url(#rainDrop)" />
+
+  <!-- Rolling Rwandan Hills (Base) -->
+  <path d="M0 48 Q18 38 36 46 T64 42 L64 64 L0 64 Z" fill="url(#rwandaHills)" opacity="0.95" />
+  <path d="M0 54 Q24 45 48 52 T64 50 L64 64 L0 64 Z" fill="#042f2e" />
+
+  <!-- Agricultural Sprout / Crop Leaf (Center Rising from Soil) -->
+  <g transform="translate(32, 49)">
+    <!-- Stem -->
+    <path d="M0 6 Q1 0 0 -14" stroke="#6ee7b7" stroke-width="2" stroke-linecap="round" fill="none" />
+    
+    <!-- Right Primary Leaf -->
+    <path d="M0 -6 C5 -13 14 -12 14 -3 C14 3 6 4 0 -4 Z" fill="url(#agroLeaf)" />
+    <!-- Left Secondary Leaf -->
+    <path d="M0 -1 C-4 -6 -11 -5 -11 1 C-11 5 -4 6 0 0 Z" fill="url(#agroLeaf)" />
+    
+    <!-- Dewdrop on leaf -->
+    <circle cx="9" cy="-5" r="1" fill="#ffffff" opacity="0.9" />
+  </g>
+</svg>

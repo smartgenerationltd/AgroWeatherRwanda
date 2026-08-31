@@ -71,6 +71,8 @@ export const askAgroAdvisorCustom = async (
     : `💡 Advisory for ${location.name}: Based on ${weather.current.temp.toFixed(0)}°C and soil moisture at ${weather.current.soil_moisture_percentage}%, observe RAB recommended practices. If applying fertilizer or planting seeds, verify that heavy rain wash-off risks are minimal. For soil health in ${location.name}, maintain terracing and mulching.`;
 };
 
+export const sendAgroChatMessage = askAgroAdvisorCustom;
+
 const generateFallbackRecommendation = (
   role: UserRole,
   weather: WeatherData,

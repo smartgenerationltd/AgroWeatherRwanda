@@ -1,0 +1,180 @@
+{
+  "entities": {
+    "users": {
+      "title": "User Profiles",
+      "description": "User account details, role in Rwanda agriculture, preferred language and location",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "fullName": { "type": "string", "description": "Full name of user" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string", "description": "Rwandan telephone (+250...)" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["Farmer", "Trader", "Leader", "Agronomist", "Cooperative", "Researcher", "NGO", "Admin"] },
+        "preferredLanguage": { "type": "string", "enum": ["rw", "en", "fr"] },
+        "province": { "type": "string" },
+        "district": { "type": "string" },
+        "sector": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "fullName", "email", "role"]
+    },
+    "farms": {
+      "title": "Farms",
+      "description": "Farmer or cooperative managed farm holdings in Rwanda",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string", "description": "User UID who owns the farm" },
+        "farmName": { "type": "string" },
+        "province": { "type": "string" },
+        "district": { "type": "string" },
+        "sector": { "type": "string" },
+        "village": { "type": "string" },
+        "latitude": { "type": "number" },
+        "longitude": { "type": "number" },
+        "altitudeMeters": { "type": "number" },
+        "farmSizeHectares": { "type": "number" },
+        "soilType": { "type": "string" },
+        "irrigationType": { "type": "string", "enum": ["Rainfed", "Canal/Marshland", "Drip/Sprinkler", "Pumping", "None"] },
+        "terraced": { "type": "boolean" },
+        "agroEcoZone": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "farmName", "district"]
+    },
+    "crops": {
+      "title": "Crops",
+      "description": "Crops planted on specific farms across agricultural seasons in Rwanda",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "farmId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "cropType": { "type": "string", "description": "e.g. Maize, Climbing Beans, Irish Potatoes, Rice, Coffee, Tea, Cassava, Vegetables" },
+        "cropNameRw": { "type": "string" },
+        "variety": { "type": "string", "description": "e.g. RHM 104, RWV 1129, Kinigi, Kuruseke" },
+        "season": { "type": "string", "enum": ["Season A", "Season B", "Season C"] },
+        "plantingDate": { "type": "string", "format": "date" },
+        "expectedHarvestDate": { "type": "string", "format": "date" },
+        "growthStage": { "type": "string", "enum": ["Land Preparation", "Planting", "Germination", "Vegetative", "Flowering", "Fruiting", "Maturity", "Harvest"] },
+        "acreage": { "type": "number", "description": "Size in hectares or ares" },
+        "healthStatus": { "type": "string", "enum": ["Excellent", "Good", "Attention Needed", "Risk Alert"] },
+        "targetYieldKg": { "type": "number" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "farmId", "ownerId", "cropType", "plantingDate"]
+    },
+    "farmingTasks": {
+      "title": "Farming Calendar Tasks",
+      "description": "Daily and weekly smart agricultural tasks mapped to weather forecasts and crop stages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "farmId": { "type": "string" },
+        "cropId": { "type": "string" },
+        "title": { "type": "string" },
+        "titleRw": { "type": "string" },
+        "description": { "type": "string" },
+        "descriptionRw": { "type": "string" },
+        "dueDate": { "type": "string", "format": "date" },
+        "category": { "type": "string", "enum": ["Planting", "Fertilizer", "Spraying", "Weeding", "Irrigation", "Scouting", "Harvesting", "Storage", "General"] },
+        "priority": { "type": "string", "enum": ["low", "medium", "high", "urgent"] },
+        "status": { "type": "string", "enum": ["pending", "completed", "postponed"] },
+        "weatherSuitability": { "type": "string", "enum": ["optimal", "caution", "avoid"] },
+        "weatherReason": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "title", "dueDate", "status"]
+    },
+    "conversations": {
+      "title": "AI Agronomist Conversations",
+      "description": "Chat conversations between farmers and the AI Agronomist assistant",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "sender": { "type": "string", "enum": ["user", "ai"] },
+              "text": { "type": "string" },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "sources": { "type": "array" }
+            }
+          }
+        },
+        "district": { "type": "string" },
+        "cropContext": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "userId", "messages"]
+    },
+    "userAlerts": {
+      "title": "User Customized Weather & Crop Alerts",
+      "description": "Personalized climate and pest alert subscriptions and notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "district": { "type": "string" },
+        "category": { "type": "string" },
+        "severity": { "type": "string" },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "recommendedAction": { "type": "string" },
+        "read": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "title", "message"]
+    }
+  },
+  "auth": {
+    "providers": ["email", "google"]
+  },
+  "firestore": {
+    "databaseId": "ai-studio-agroweatherrwand-d8dcb721-eda2-4fa1-9035-d51cd0f962de",
+    "structure": [
+      {
+        "collection": "users",
+        "description": "User profile collection keyed by auth UID",
+        "rules": "Users can read and write only their own profile document. Admins can read all profiles."
+      },
+      {
+        "collection": "farms",
+        "description": "Farms owned by users",
+        "rules": "Users can create, read, update, delete farms where ownerId == request.auth.uid. Admins can read all."
+      },
+      {
+        "collection": "crops",
+        "description": "Crops cultivated on farms",
+        "rules": "Users can create, read, update, delete crops where ownerId == request.auth.uid. Admins can read all."
+      },
+      {
+        "collection": "farmingTasks",
+        "description": "Calendar tasks for farmers",
+        "rules": "Users can create, read, update, delete tasks where ownerId == request.auth.uid."
+      },
+      {
+        "collection": "conversations",
+        "description": "AI Agronomist chat sessions",
+        "rules": "Users can create, read, update, delete conversations where userId == request.auth.uid."
+      },
+      {
+        "collection": "userAlerts",
+        "description": "User alert inbox and notifications",
+        "rules": "Users can create, read, update, delete alerts where ownerId == request.auth.uid."
+      }
+    ]
+  }
+}

@@ -1,25 +1,112 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { UserRole, WeatherData, Location, Language, WeatherCondition } from './types';
-import { LOCATIONS } from './constants';
+import { 
+  UserRole, 
+  WeatherData, 
+  Location, 
+  Language, 
+  NavigationTab, 
+  UserProfile, 
+  Farm, 
+  Crop, 
+  FarmingTask, 
+  WeatherCondition 
+} from './types';
+import { ALL_RWANDA_LOCATIONS } from './services/rwandaLocationsData';
 import { getMockWeatherData } from './services/weatherService';
 import { getRecommendations, RecommendationResult } from './services/geminiService';
+import { 
+  getCurrentUserProfile, 
+  subscribeToAuthChanges, 
+  logoutUser, 
+  startDemoSession 
+} from './services/authService';
+import { 
+  getFarms, 
+  getCrops, 
+  getTasks 
+} from './services/firestoreService';
+
+// UI Components
 import Header from './components/Header';
-import Dashboard from './components/Dashboard';
-import RoleSelector from './components/RoleSelector';
 import SkyBackground from './components/SkyBackground';
-import { CloudRain, Sun, CloudLightning, RefreshCw, Layers } from 'lucide-react';
+import AuthModal from './components/AuthModal';
+import HomeDashboard from './components/HomeDashboard';
+import WeatherIntelligenceView from './components/WeatherIntelligenceView';
+import MyFarmView from './components/MyFarmView';
+import CropsManagementView from './components/CropsManagementView';
+import AIAgronomistChatView from './components/AIAgronomistChatView';
+import AgriculturalAlertsView from './components/AgriculturalAlertsView';
+import FarmingCalendarView from './components/FarmingCalendarView';
+import LearnCenterView from './components/LearnCenterView';
+import AdminDashboardView from './components/AdminDashboardView';
+import ProfileView from './components/ProfileView';
+
+import { RefreshCw } from 'lucide-react';
 
 const App: React.FC = () => {
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(UserRole.Farmer);
-  const [currentLocation, setCurrentLocation] = useState<Location>(LOCATIONS[1]); // Default to Musanze (Rwanda high-altitude farming hub)
-  const [lang, setLang] = useState<Language>('rw'); // Default to Kinyarwanda as requested for Rwandan farmers
+  // Navigation & User State
+  const [currentTab, setCurrentTab] = useState<NavigationTab>('home');
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [authModalOpen, setAuthModalOpen] = useState<boolean>(false);
+  const [lang, setLang] = useState<Language>('rw'); // Default Kinyarwanda
+
+  // Location & Weather State
+  const [currentLocation, setCurrentLocation] = useState<Location>(ALL_RWANDA_LOCATIONS[3]); // Musanze
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
-  const [recommendations, setRecommendations] = useState<RecommendationResult | null>(null);
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
-  const [loadingRecommendations, setLoadingRecommendations] = useState<boolean>(false);
   const [simulatedConditionOverride, setSimulatedConditionOverride] = useState<string>('DEFAULT');
 
-  // Load weather data for the selected location
+  // AI & Agro Decision State
+  const [recommendations, setRecommendations] = useState<RecommendationResult | null>(null);
+  const [loadingRecommendations, setLoadingRecommendations] = useState<boolean>(false);
+
+  // Firestore Collections State
+  const [farms, setFarms] = useState<Farm[]>([]);
+  const [crops, setCrops] = useState<Crop[]>([]);
+  const [tasks, setTasks] = useState<FarmingTask[]>([]);
+
+  // 1. Initialize Auth Subscription & Load User Data
+  useEffect(() => {
+    // Check if user already in session or start initial demo user
+    const initialUser = getCurrentUserProfile();
+    if (initialUser) {
+      setUser(initialUser);
+      setLang(initialUser.preferredLanguage || 'rw');
+    } else {
+      // Default to demo session for instant high-fidelity experience
+      const demoUser = startDemoSession(UserRole.Farmer, currentLocation.name);
+      setUser(demoUser);
+    }
+
+    const unsubscribe = subscribeToAuthChanges((authUser) => {
+      setUser(authUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // 2. Fetch Firestore Data (Farms, Crops, Tasks) whenever user or location updates
+  const loadFirestoreData = useCallback(async () => {
+    const ownerId = user ? user.uid : 'demo-farmer-rwanda-001';
+    try {
+      const [fetchedFarms, fetchedCrops, fetchedTasks] = await Promise.all([
+        getFarms(ownerId),
+        getCrops(ownerId),
+        getTasks(ownerId)
+      ]);
+      setFarms(fetchedFarms);
+      setCrops(fetchedCrops);
+      setTasks(fetchedTasks);
+    } catch (err) {
+      console.warn("Notice: Loaded offline cache for farms & crops:", err);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    loadFirestoreData();
+  }, [loadFirestoreData]);
+
+  // 3. Load Real-Time / Simulated Weather Telemetry for selected Location
   const loadWeatherData = useCallback((location: Location) => {
     setLoadingWeather(true);
     const data = getMockWeatherData(location);
@@ -27,7 +114,11 @@ const App: React.FC = () => {
     setLoadingWeather(false);
   }, []);
 
-  // Fetch AI recommendations whenever role, location, weather, or language changes
+  useEffect(() => {
+    loadWeatherData(currentLocation);
+  }, [currentLocation, loadWeatherData]);
+
+  // 4. Fetch Gemini AI Recommendations & Decision Briefing
   const fetchRecommendations = useCallback(async (
     role: UserRole,
     weather: WeatherData,
@@ -46,21 +137,14 @@ const App: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadWeatherData(currentLocation);
-  }, [currentLocation, loadWeatherData]);
-
-  useEffect(() => {
-    if (selectedRole && weatherData) {
-      fetchRecommendations(selectedRole, weatherData, currentLocation, lang);
+    if (weatherData) {
+      const activeRole = user?.role || UserRole.Farmer;
+      fetchRecommendations(activeRole, weatherData, currentLocation, lang);
     }
-  }, [selectedRole, weatherData, currentLocation, lang, fetchRecommendations]);
+  }, [user?.role, weatherData, currentLocation, lang, fetchRecommendations]);
 
   const handleLocationChange = (newLocation: Location) => {
     setCurrentLocation(newLocation);
-  };
-
-  const handleRoleChange = (newRole: UserRole) => {
-    setSelectedRole(newRole);
   };
 
   const handleLanguageChange = (newLang: Language) => {
@@ -68,12 +152,19 @@ const App: React.FC = () => {
   };
 
   const handleRefreshRecommendations = () => {
-    if (selectedRole && weatherData) {
-      fetchRecommendations(selectedRole, weatherData, currentLocation, lang);
+    if (weatherData) {
+      const activeRole = user?.role || UserRole.Farmer;
+      fetchRecommendations(activeRole, weatherData, currentLocation, lang);
     }
   };
 
-  // Determine active weather condition for the animated sky background
+  const handleSignOut = async () => {
+    await logoutUser();
+    setUser(null);
+    setCurrentTab('home');
+  };
+
+  // Weather Condition for animated sky canvas
   const activeCondition: WeatherCondition | undefined = weatherData
     ? simulatedConditionOverride === 'RAIN'
       ? { id: 500, main: 'Rain', description: 'Imvura n\'Igihu', descriptionEn: 'Rain showers', icon: 'rain' }
@@ -84,116 +175,215 @@ const App: React.FC = () => {
       : weatherData.current.condition
     : undefined;
 
+  const unreadAlertCount = weatherData?.alerts?.length || 0;
+
   return (
-    <div className="relative min-h-screen text-slate-900 overflow-x-hidden font-sans">
-      {/* Animated Blue Sky Background with Clouds, Rain Particles & Rwandan Hills Silhouette */}
+    <div className="relative min-h-screen text-slate-900 overflow-x-hidden font-sans bg-slate-950">
+      
+      {/* Animated Sky Canvas & Rwanda Mountain Ridge Line */}
       <SkyBackground weatherCondition={activeCondition} />
 
-      {/* Main Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-6">
-        {selectedRole === null ? (
-          <RoleSelector 
-            onSelectRole={(role) => setSelectedRole(role)} 
-            lang={lang} 
-            onLanguageChange={handleLanguageChange} 
-          />
+      {/* Top Application Header & Navigation */}
+      <Header
+        currentTab={currentTab}
+        onTabChange={setCurrentTab}
+        currentLocation={currentLocation}
+        onLocationChange={handleLocationChange}
+        lang={lang}
+        onLanguageChange={handleLanguageChange}
+        user={user}
+        onOpenAuth={() => setAuthModalOpen(true)}
+        unreadAlertCount={unreadAlertCount}
+      />
+
+      {/* Main Applet Content Container */}
+      <main className="relative z-10 max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6">
+        {loadingWeather || !weatherData ? (
+          <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl p-12 border border-white/10 text-center text-white flex flex-col items-center justify-center space-y-4 shadow-2xl">
+            <RefreshCw className="w-8 h-8 text-emerald-400 animate-spin" />
+            <p className="text-sm font-semibold">
+              {lang === 'rw' 
+                ? 'Guhuza amakuru na Sitasiyo za Meteo Rwanda...' 
+                : 'Synchronizing with Meteo Rwanda station telemetry...'}
+            </p>
+          </div>
         ) : (
           <>
-            {/* Header & Controls */}
-            <Header
-              userRole={selectedRole}
-              currentLocation={currentLocation}
-              locations={LOCATIONS}
-              lang={lang}
-              onLocationChange={handleLocationChange}
-              onRoleChange={handleRoleChange}
-              onLanguageChange={handleLanguageChange}
-            />
-
-            {/* Quick Sky Animation & Weather Simulation Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 bg-slate-900/60 backdrop-blur-md border border-white/10 px-4 py-2 rounded-xl text-white text-xs">
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-sky-300 flex items-center gap-1.5">
-                  <Layers className="w-3.5 h-3.5" />
-                  {lang === 'rw' ? 'Imiterere y\'Ikirere (Sky Animation):' : 'Sky Weather Movement:'}
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => setSimulatedConditionOverride('DEFAULT')}
-                    className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
-                      simulatedConditionOverride === 'DEFAULT' ? 'bg-sky-500 text-slate-950 font-bold' : 'hover:bg-white/10 text-slate-300'
-                    }`}
-                  >
-                    {lang === 'rw' ? 'Meteo Live' : 'Live Station'}
-                  </button>
-                  <button
-                    onClick={() => setSimulatedConditionOverride('SUNNY')}
-                    className={`px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition-all ${
-                      simulatedConditionOverride === 'SUNNY' ? 'bg-amber-400 text-slate-950 font-bold' : 'hover:bg-white/10 text-slate-300'
-                    }`}
-                  >
-                    <Sun className="w-3 h-3 text-yellow-300" />
-                    {lang === 'rw' ? 'Izuba' : 'Clear Sky'}
-                  </button>
-                  <button
-                    onClick={() => setSimulatedConditionOverride('RAIN')}
-                    className={`px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition-all ${
-                      simulatedConditionOverride === 'RAIN' ? 'bg-sky-500 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
-                    }`}
-                  >
-                    <CloudRain className="w-3 h-3 text-sky-200" />
-                    {lang === 'rw' ? 'Imvura' : 'Rain'}
-                  </button>
-                  <button
-                    onClick={() => setSimulatedConditionOverride('STORM')}
-                    className={`px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 transition-all ${
-                      simulatedConditionOverride === 'STORM' ? 'bg-indigo-500 text-white font-bold' : 'hover:bg-white/10 text-slate-300'
-                    }`}
-                  >
-                    <CloudLightning className="w-3 h-3 text-yellow-300" />
-                    {lang === 'rw' ? 'Umurabyo' : 'Thunder'}
-                  </button>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 text-slate-300">
-                <span>{currentLocation.name} ({currentLocation.altitudeMeters}m)</span>
-                <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-              </div>
-            </div>
-
-            {/* Dashboard Content */}
-            {loadingWeather || !weatherData ? (
-              <div className="bg-slate-900/80 backdrop-blur-xl rounded-2xl p-12 border border-white/20 text-center text-white flex flex-col items-center justify-center space-y-4">
-                <RefreshCw className="w-8 h-8 text-sky-400 animate-spin" />
-                <p className="text-sm font-semibold">
-                  {lang === 'rw' 
-                    ? 'Kwakira amakuru y\'iteganyagihe ya Meteo Rwanda...' 
-                    : 'Loading Meteo Rwanda station telemetry...'}
-                </p>
-              </div>
-            ) : (
-              <Dashboard
-                userRole={selectedRole}
+            {currentTab === 'home' && (
+              <HomeDashboard
+                user={user}
                 weatherData={weatherData}
                 location={currentLocation}
                 lang={lang}
                 recommendations={recommendations}
                 loadingRecommendations={loadingRecommendations}
                 onRefreshRecommendations={handleRefreshRecommendations}
-                onSelectRole={handleRoleChange}
+                onNavigate={setCurrentTab}
+                farms={farms}
+                crops={crops}
+                tasks={tasks}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            )}
+
+            {currentTab === 'weather' && (
+              <WeatherIntelligenceView
+                weatherData={weatherData}
+                location={currentLocation}
+                lang={lang}
+                onSelectConditionOverride={setSimulatedConditionOverride}
+                activeConditionOverride={simulatedConditionOverride}
+              />
+            )}
+
+            {currentTab === 'farms' && (
+              <MyFarmView
+                farms={farms}
+                crops={crops}
+                user={user}
+                lang={lang}
+                onRefreshFarms={loadFirestoreData}
+                onOpenAuth={() => setAuthModalOpen(true)}
+              />
+            )}
+
+            {currentTab === 'crops' && (
+              <CropsManagementView
+                crops={crops}
+                farms={farms}
+                weatherData={weatherData}
+                user={user}
+                lang={lang}
+                onRefreshCrops={loadFirestoreData}
+              />
+            )}
+
+            {currentTab === 'ai-agronomist' && (
+              <AIAgronomistChatView
+                weatherData={weatherData}
+                location={currentLocation}
+                role={user?.role || UserRole.Farmer}
+                user={user}
+                lang={lang}
+              />
+            )}
+
+            {currentTab === 'alerts' && (
+              <AgriculturalAlertsView
+                weatherData={weatherData}
+                location={currentLocation}
+                lang={lang}
+                role={user?.role || UserRole.Farmer}
+                user={user}
+              />
+            )}
+
+            {currentTab === 'calendar' && (
+              <FarmingCalendarView
+                tasks={tasks}
+                crops={crops}
+                farms={farms}
+                weatherData={weatherData}
+                user={user}
+                lang={lang}
+                onRefreshTasks={loadFirestoreData}
+              />
+            )}
+
+            {currentTab === 'learn' && (
+              <LearnCenterView
+                lang={lang}
+              />
+            )}
+
+            {currentTab === 'admin' && (
+              <AdminDashboardView
+                lang={lang}
+                user={user}
+              />
+            )}
+
+            {currentTab === 'profile' && (
+              <ProfileView
+                user={user}
+                lang={lang}
+                onLanguageChange={handleLanguageChange}
+                onUpdateUser={(updated) => setUser(updated)}
+                onSignOut={handleSignOut}
+                onOpenAuth={() => setAuthModalOpen(true)}
               />
             )}
           </>
         )}
+      </main>
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-xs text-slate-700 font-medium py-4">
-          <p>
-            AgroWeather Rwanda © {new Date().getFullYear()} • Powered by Meteo Rwanda, MINAGRI, RAB & Gemini AI
-          </p>
-        </footer>
-      </div>
+      {/* Authentication Modal */}
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={(loggedUser) => {
+          setUser(loggedUser);
+          setLang(loggedUser.preferredLanguage || 'rw');
+          loadFirestoreData();
+        }}
+        lang={lang}
+      />
+
+      {/* Footer with Brand & Partner Logos */}
+      <footer className="relative z-10 border-t border-slate-800/80 bg-slate-950/95 text-slate-400 text-xs py-8 mt-12">
+        <div className="max-w-7xl mx-auto px-4 space-y-6">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-800/60">
+            
+            {/* App Brand Logo */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900 border border-emerald-500/30 p-1 flex-shrink-0 shadow-md">
+                <img 
+                  src="/favicon.svg" 
+                  alt="AgroWeather Rwanda Logo" 
+                  className="w-full h-full object-contain"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="text-left">
+                <div className="font-extrabold text-sm text-white tracking-tight">
+                  AgroWeather <span className="text-sky-400">Rwanda</span>
+                </div>
+                <div className="text-[11px] text-slate-400">
+                  {lang === 'rw' ? 'Ihuriro ry\'Umuhinzi & AI mu Iteganyagihe ry\'Ubuhinzi' : 'Farmer & Agricultural Climate Intelligence Platform'}
+                </div>
+              </div>
+            </div>
+
+            {/* Partner Agency Badges with Logos */}
+            <div className="flex items-center gap-4 sm:gap-6 flex-wrap justify-center">
+              <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-1.5">
+                <img src="/meteo_rwanda_logo.svg" alt="Meteo Rwanda" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                <span className="text-[11px] font-semibold text-slate-300">Meteo Rwanda</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-1.5">
+                <img src="/minagri_logo.svg" alt="MINAGRI" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                <span className="text-[11px] font-semibold text-slate-300">MINAGRI</span>
+              </div>
+              <div className="flex items-center gap-2 bg-slate-900/60 border border-slate-800 rounded-xl px-3 py-1.5">
+                <img src="/rab_logo.svg" alt="RAB" className="w-6 h-6 object-contain" referrerPolicy="no-referrer" />
+                <span className="text-[11px] font-semibold text-slate-300">RAB</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <p>
+              AgroWeather Rwanda © {new Date().getFullYear()} • Powered by Rwanda Meteorology Agency & Rwanda Agriculture Board.
+            </p>
+            <div className="flex items-center gap-3">
+              <span>🇷🇼 Republic of Rwanda</span>
+              <span>•</span>
+              <span className="text-emerald-400 font-semibold">Climate-Smart Agriculture</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+
     </div>
   );
 };

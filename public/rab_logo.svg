@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="rabBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#047857" />
+      <stop offset="50%" stop-color="#065f46" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="rabGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="60%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+    <linearGradient id="rabCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#0284c7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Ring Badge -->
+  <circle cx="60" cy="60" r="56" fill="url(#rabBg)" stroke="url(#rabGold)" stroke-width="2.5" />
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#6ee7b7" stroke-width="1" stroke-dasharray="4, 3" opacity="0.6" />
+
+  <!-- Agri-Tech Innovation DNA Helix / Science Sprout Motif -->
+  <g transform="translate(60, 48)">
+    <!-- Genetic / Science Innovation Arc -->
+    <path d="M-18 6 C-18 -12 18 -12 18 6" fill="none" stroke="url(#rabCyan)" stroke-width="2" stroke-linecap="round" />
+    <path d="M-14 14 C-14 2 14 2 14 14" fill="none" stroke="url(#rabGold)" stroke-width="1.8" stroke-linecap="round" />
+    
+    <!-- Connected Science Nodes -->
+    <circle cx="-18" cy="6" r="3" fill="#38bdf8" />
+    <circle cx="0" cy="-10" r="3.5" fill="#fcd34d" />
+    <circle cx="18" cy="6" r="3" fill="#38bdf8" />
+  </g>
+
+  <!-- Healthy Crop Leaves + Cattle Silhouette -->
+  <g transform="translate(60, 66)">
+    <!-- Main Upward Leaf -->
+    <path d="M0 8 L0 -14" stroke="#6ee7b7" stroke-width="2.5" stroke-linecap="round" />
+    <path d="M0 -6 C5 -14 14 -12 14 -2 C14 5 5 6 0 -3 Z" fill="#34d399" />
+    <path d="M0 -2 C-5 -8 -13 -7 -13 0 C-13 5 -4 6 0 0 Z" fill="#10b981" />
+  </g>
+
+  <!-- Inyambo Traditional Cattle Horns Motif -->
+  <path d="M38 48 C44 38 52 38 60 44 C68 38 76 38 82 48" fill="none" stroke="url(#rabGold)" stroke-width="1.8" stroke-linecap="round" opacity="0.75" />
+
+  <!-- Banner Box -->
+  <rect x="26" y="80" width="68" height="15" rx="5" fill="#042f2e" stroke="url(#rabGold)" stroke-width="1" />
+  <text x="60" y="91" font-family="system-ui, sans-serif" font-size="8.5" font-weight="900" fill="#fef08a" text-anchor="middle" letter-spacing="1">
+    RAB
+  </text>
+  <text x="60" y="109" font-family="system-ui, sans-serif" font-size="4.8" font-weight="700" fill="#a7f3d0" text-anchor="middle" letter-spacing="0.3">
+    RWANDA AGRICULTURE BOARD
+  </text>
+</svg>
